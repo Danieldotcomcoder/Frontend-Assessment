@@ -1,7 +1,7 @@
 import data from './data.js';
 
 class Slider {
-  constructor(elementId, data, autoPlay = false, autoPlayTime = 5000) {
+  constructor(elementId, data, autoPlay = false, autoPlayTime = 1) {
     this.element = this.createSliderElement(elementId);
     this.data = data;
     this.currentSlide = 0;
@@ -13,13 +13,22 @@ class Slider {
 
   init = () => {
     this.createDots();
+    this.createAutoPlayControl();
     this.addEventListeners();
     this.updateSlide();
     if (this.autoPlay) {
-      setInterval(() => {
-        this.nextSlide();
-      }, this.autoPlayTime);
+      this.startAutoPlay();
     }
+  };
+
+  startAutoPlay = () => {
+    this.autoPlayInterval = setInterval(() => {
+      this.nextSlide();
+    }, this.autoPlayTime * 1000);
+  };
+
+  stopAutoPlay = () => {
+    clearInterval(this.autoPlayInterval);
   };
 
   createSliderElement = (id) => {
@@ -50,6 +59,56 @@ class Slider {
     mainSection.appendChild(slider);
 
     return slider;
+  };
+
+  createAutoPlayControl = () => {
+    // Create auto-play control element
+    const autoPlayControl = document.createElement('div');
+    autoPlayControl.className = 'auto-play-control';
+
+    // Create auto-play toggle button
+    const autoPlayToggle = document.createElement('img');
+    autoPlayToggle.className = 'auto-play-toggle';
+    autoPlayToggle.src = this.autoPlay
+      ? '../Images/pause-icon.png'
+      : '../Images/play-icon.png';
+    autoPlayControl.appendChild(autoPlayToggle);
+
+    // Create auto-play time input
+    const autoPlayTimeInput = document.createElement('input');
+    autoPlayTimeInput.className = 'auto-play-time-input';
+    autoPlayTimeInput.type = 'number';
+    autoPlayTimeInput.min = '1';
+    autoPlayTimeInput.value = this.autoPlayTime;
+    autoPlayTimeInput.style.display = this.autoPlay ? 'flex' : 'none';
+
+    autoPlayControl.appendChild(autoPlayTimeInput);
+
+    // Append auto-play control to the slide element
+    const slideElement = this.element.querySelector('.slide');
+    slideElement.appendChild(autoPlayControl);
+
+    // Add event listeners
+    autoPlayToggle.addEventListener('click', () => {
+      this.autoPlay = !this.autoPlay;
+      autoPlayToggle.src = this.autoPlay
+        ? '../Images/pause-icon.png'
+        : '../Images/play-icon.png';
+      autoPlayTimeInput.style.display = this.autoPlay ? 'flex' : 'none';
+      if (this.autoPlay) {
+        this.startAutoPlay();
+      } else {
+        this.stopAutoPlay();
+      }
+    });
+
+    autoPlayTimeInput.addEventListener('change', (event) => {
+      this.autoPlayTime = event.target.value;
+      if (this.autoPlay) {
+        this.stopAutoPlay();
+        this.startAutoPlay();
+      }
+    });
   };
 
   createDots = () => {
@@ -291,4 +350,4 @@ class Slider {
 
 // Two instances of the component with different configuration per instance
 new Slider('.slider1', data); // no autoplay
-new Slider('.slider2', data, true, 3000); // autoplay with custom time of 3 seconds.
+new Slider('.slider2', data, true, 3); // autoplay with custom time of 3 seconds.
