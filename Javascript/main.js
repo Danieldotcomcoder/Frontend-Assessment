@@ -16,7 +16,7 @@ class Slider {
 
     addButton.className = 'add-slide-button';
     addButton.id = `add-slide-button-${elementId}`;
-    addButton.src = '../Images/add.png';
+    addButton.src = './Images/add.png';
     addButton.addEventListener('click', this.showPopup);
     slideElement.appendChild(addButton);
   }
@@ -81,8 +81,8 @@ class Slider {
     const autoPlayToggle = document.createElement('img');
     autoPlayToggle.className = 'auto-play-toggle';
     autoPlayToggle.src = this.autoPlay
-      ? '../Images/pause-icon.png'
-      : '../Images/play-icon.png';
+      ? './Images/pause-icon.png'
+      : './Images/play-icon.png';
     autoPlayControl.appendChild(autoPlayToggle);
 
     // Create auto-play time input
