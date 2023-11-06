@@ -1,4 +1,4 @@
-import data from './data.js';
+import sliderConfigurations from './slides.js';
 
 class Slider {
   constructor(elementId, data, autoPlay = false, autoPlayTime = 1) {
@@ -9,6 +9,16 @@ class Slider {
     this.autoPlayTime = autoPlayTime;
     this.isAnimating = false;
     this.init();
+    this.createPopup();
+
+    const addButton = document.createElement('img');
+    const slideElement = this.element.querySelector('.slide');
+
+    addButton.className = 'add-slide-button';
+    addButton.id = `add-slide-button-${elementId}`;
+    addButton.src = '../Images/add.png';
+    addButton.addEventListener('click', this.showPopup);
+    slideElement.appendChild(addButton);
   }
 
   init = () => {
@@ -16,6 +26,7 @@ class Slider {
     this.createAutoPlayControl();
     this.addEventListeners();
     this.updateSlide();
+
     if (this.autoPlay) {
       this.startAutoPlay();
     }
@@ -112,13 +123,21 @@ class Slider {
   };
 
   createDots = () => {
-    // Create dots container
-    const dotsContainer = document.createElement('div');
-    dotsContainer.className = 'slide-dots';
+    // Get the existing dots container
+    let dotsContainer = this.element.querySelector('.slide-dots');
 
-    // Append dots container to the slide element
-    const slideElement = this.element.querySelector('.slide');
-    slideElement.appendChild(dotsContainer);
+    // If the dots container doesn't exist, create it
+    if (!dotsContainer) {
+      dotsContainer = document.createElement('div');
+      dotsContainer.className = 'slide-dots';
+
+      // Append dots container to the slide element
+      const slideElement = this.element.querySelector('.slide');
+      slideElement.appendChild(dotsContainer);
+    } else {
+      // If the dots container does exist, remove all existing dots
+      dotsContainer.innerHTML = '';
+    }
 
     // Create a dot for each slide
     for (let i = 0; i < this.data.length; i++) {
@@ -173,6 +192,21 @@ class Slider {
       slideContentElement.innerHTML = '';
       this.addSlideContents(slideData, slideContentElement);
     }
+  };
+
+  updateSlides = () => {
+    // Clear the current slides
+    const slideContainer = this.element.querySelector('.slide');
+    slideContainer.innerHTML = '';
+
+    // Add each slide to the slider
+    this.data.forEach((slideData, index) => {
+      const slideContentElement = document.createElement('div');
+      slideContentElement.className = 'slide-content';
+      slideContainer.appendChild(slideContentElement);
+
+      this.addSlideContents(slideData, slideContentElement);
+    });
   };
 
   addSlideContents = (slideData, slideContentElement) => {
@@ -346,24 +380,139 @@ class Slider {
       this.isAnimating = false;
     }
   };
+  createPopup = () => {
+    // The code for creating the popup goes here...
+    // Create popup
+    this.popup = document.createElement('div');
+    this.popup.className = 'popup';
+    this.popup.style.display = 'none'; // Hide popup initially
+
+    // Create form
+    const form = document.createElement('form');
+    form.className = 'slide-form';
+
+    // Create input for name
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.name = 'name';
+    nameInput.placeholder = 'Name';
+    nameInput.value = 'Daniel Shdeed';
+    form.appendChild(nameInput);
+
+    // Create input for role
+    const roleInput = document.createElement('input');
+    roleInput.type = 'text';
+    roleInput.name = 'role';
+    roleInput.value = 'FrontEnd Engineer';
+    roleInput.placeholder = 'Role';
+    form.appendChild(roleInput);
+
+    // Create input for image
+    const imageInput = document.createElement('input');
+    imageInput.type = 'text';
+    imageInput.name = 'image';
+    imageInput.placeholder = 'Image URL';
+    imageInput.value = '../Images/man.png';
+
+    form.appendChild(imageInput);
+
+    // Create textarea for message
+    const messageInput = document.createElement('textarea');
+    messageInput.name = 'message';
+    messageInput.placeholder = 'Message';
+    messageInput.value =
+      'What a terrific job you have done on my CV. I nearly cried when I saw it and read it… Many, many thanks for the professional and fantastic work you have done so far on my CV "';
+    form.appendChild(messageInput);
+
+    // Create submit button
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.textContent = 'Add Slide';
+    form.appendChild(submitButton);
+
+    // Append form to popup
+    this.popup.appendChild(form);
+
+    // Create exit button
+    const exitButton = document.createElement('button');
+    exitButton.textContent = 'Exit';
+    exitButton.addEventListener('click', () => {
+      this.popup.style.display = 'none'; // Hide popup when exit button is clicked
+    });
+    this.popup.appendChild(exitButton);
+
+    // Append popup to body (or wherever you want the popup to appear)
+    document.body.appendChild(this.popup);
+
+    // Add event listener for form submission
+    form.addEventListener('submit', this.handleFormSubmit);
+  };
+
+  showPopup = () => {
+    this.popup.style.display = 'block'; // Show popup
+  };
+
+  handleFormSubmit = (event) => {
+    event.preventDefault();
+
+    // Get form data
+    const formData = new FormData(event.target);
+    const name = formData.get('name');
+    const role = formData.get('role');
+    const image = formData.get('image');
+    const message = formData.get('message');
+
+    // Create new slide
+    const newSlide = {
+      name: name,
+      role: role,
+      image: image,
+      message: message,
+    };
+
+    // Add new slide to this slider's data
+    this.data.push(newSlide);
+
+    // Re-initialize this slider with the updated data
+    this.updateSlide();
+    this.createDots();
+    this.updateDots();
+    this.addEventListeners();
+    this.popup.style.display = 'none';
+  };
+
+  handleFormSubmit = (event) => {
+    event.preventDefault();
+
+    // Get form data
+    const formData = new FormData(event.target);
+    const name = formData.get('name');
+    const role = formData.get('role');
+    const image = formData.get('image');
+    const message = formData.get('message');
+
+    // Create new slide
+    const newSlide = {
+      name: name,
+      role: role,
+      image: image,
+      message: message,
+    };
+
+    // Add new slide to this slider's data
+    this.data.push(newSlide);
+
+    // Re-initialize this slider with the updated data
+    this.updateSlide();
+    this.createDots();
+    this.updateDots();
+    this.addEventListeners();
+    const popup = document.querySelector('.popup');
+    popup.style.display = 'none';
+  };
 }
 
-const sliderConfigurations = [
-  {
-    element: '.slider1',
-    data: data,
-    autoPlay: false,
-  },
-  {
-    element: '.slider2',
-    data: data,
-    autoPlay: true,
-    autoPlayTime: 3 ,
-  },
-  // Add more configurations as needed
-];
-
 // Loop through each configuration and create a new Slider instance
-sliderConfigurations.forEach(config => {
+sliderConfigurations.forEach((config) => {
   new Slider(config.element, config.data, config.autoPlay, config.autoPlayTime);
 });
