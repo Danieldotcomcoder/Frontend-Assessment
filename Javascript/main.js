@@ -103,8 +103,8 @@ class Slider {
     autoPlayToggle.addEventListener('click', () => {
       this.autoPlay = !this.autoPlay;
       autoPlayToggle.src = this.autoPlay
-        ? '../Images/pause-icon.png'
-        : '../Images/play-icon.png';
+        ? './Images/pause-icon.png'
+        : './Images/play-icon.png';
       autoPlayTimeInput.style.display = this.autoPlay ? 'flex' : 'none';
       if (this.autoPlay) {
         this.startAutoPlay();
@@ -411,7 +411,7 @@ class Slider {
     imageInput.type = 'text';
     imageInput.name = 'image';
     imageInput.placeholder = 'Image URL';
-    imageInput.value = '../Images/man.png';
+    imageInput.value = './Images/man.png';
 
     form.appendChild(imageInput);
 
