@@ -348,6 +348,22 @@ class Slider {
   };
 }
 
-// Two instances of the component with different configuration per instance
-new Slider('.slider1', data); // no autoplay
-new Slider('.slider2', data, true, 3); // autoplay with custom time of 3 seconds.
+const sliderConfigurations = [
+  {
+    element: '.slider1',
+    data: data,
+    autoPlay: false,
+  },
+  {
+    element: '.slider2',
+    data: data,
+    autoPlay: true,
+    autoPlayTime: 3 ,
+  },
+  // Add more configurations as needed
+];
+
+// Loop through each configuration and create a new Slider instance
+sliderConfigurations.forEach(config => {
+  new Slider(config.element, config.data, config.autoPlay, config.autoPlayTime);
+});
