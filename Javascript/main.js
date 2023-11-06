@@ -1,4 +1,4 @@
-import data from './data.js'
+import data from './data.js';
 
 class Slider {
   constructor(elementId, data, autoPlay = false, autoPlayTime = 5000) {
@@ -75,13 +75,14 @@ class Slider {
   updateDots = () => {
     const dots = Array.from(this.element.querySelectorAll('.slide-dot'));
     dots.forEach((dot, i) => {
-      dot.src = `./Images/${i === this.currentSlide ? 'blackdot' : 'greydot'}.png`;
- // Use the black dot image for the active slide and the grey dot image for all other slides
+      dot.src = `./Images/${
+        i === this.currentSlide ? 'blackdot' : 'greydot'
+      }.png`;
+      // Use the black dot image for the active slide and the grey dot image for all other slides
     });
   };
 
   addEventListeners = () => {
-
     const leftArrow = this.element.querySelector('.left-arrow');
     const rightArrow = this.element.querySelector('.right-arrow');
 
@@ -91,7 +92,6 @@ class Slider {
         this.goToSlide(id);
       });
     });
-
 
     // // add on click EventListener for the arrows
     leftArrow.addEventListener('click', this.prevSlide);
@@ -159,54 +159,8 @@ class Slider {
     this.updateDots();
   };
 
-  nextSlide = () => {
-    return new Promise((resolve, reject) => {
-      if (this.isAnimating) return;
-
-      this.isAnimating = true;
-      // Disable the arrows tp prevent fast multiple clicks
-      this.element.querySelector('.left-arrow').disabled = true;
-      this.element.querySelector('.right-arrow').disabled = true;
-
-      // Animate the outgoing slide
-      const oldSlideContentElement =
-        this.element.querySelector('.slide-content');
-      oldSlideContentElement.style.animation = 'slide-left 0.5s forwards';
-
-      // Create a new slide content element for the incoming slide
-      const newSlideContentElement = document.createElement('div');
-      newSlideContentElement.className = 'slide-content';
-      newSlideContentElement.style.animation = 'slide-in-right 0.5s forwards';
-      this.element.querySelector('.slide').appendChild(newSlideContentElement);
-
-      // Update the current slide index and add the new contents
-      this.currentSlide = (this.currentSlide + 1) % this.data.length;
-      this.addSlideContents(
-        this.data[this.currentSlide],
-        newSlideContentElement
-      );
-
-      // Remove the old slide after the animation finishes
-      setTimeout(() => {
-        oldSlideContentElement.remove();
-        this.isAnimating = false;
-        resolve();
-        // Enable the arrows
-        this.element.querySelector('.left-arrow').disabled = false;
-        this.element.querySelector('.right-arrow').disabled = false;
-      }, 300); // Animation time
-    });
-  };
-
-  prevSlide = () => {
-    return new Promise((resolve, reject) => {
-      if (this.isAnimating) return;
-
-      this.isAnimating = true;
-      // Disable the arrows tp prevent fast multple clicks
-      this.element.querySelector('.left-arrow').disabled = true;
-      this.element.querySelector('.right-arrow').disabled = true;
-
+  animateSlideLeft = () => {
+    return new Promise((resolve) => {
       // Animate the outgoing slide
       const oldSlideContentElement =
         this.element.querySelector('.slide-content');
@@ -218,9 +172,7 @@ class Slider {
       newSlideContentElement.style.animation = 'slide-in-left 0.5s forwards';
       this.element.querySelector('.slide').appendChild(newSlideContentElement);
 
-      // Update the current slide index and add the new contents
-      this.currentSlide =
-        (this.currentSlide - 1 + this.data.length) % this.data.length;
+      // Add the new contents
       this.addSlideContents(
         this.data[this.currentSlide],
         newSlideContentElement
@@ -229,35 +181,114 @@ class Slider {
       // Remove the old slide after the animation finishes
       setTimeout(() => {
         oldSlideContentElement.remove();
-        this.isAnimating = false;
         resolve();
-        // Enable the arrows
-        this.element.querySelector('.left-arrow').disabled = false;
-        this.element.querySelector('.right-arrow').disabled = false;
       }, 300); // Animation time
     });
   };
 
+  animateSlideRight = () => {
+    return new Promise((resolve) => {
+      // Animate the outgoing slide
+      const oldSlideContentElement =
+        this.element.querySelector('.slide-content');
+      oldSlideContentElement.style.animation = 'slide-left 0.5s forwards';
 
-  // used when clicking on dots to go directly to the slide
+      // Create a new slide content element for the incoming slide
+      const newSlideContentElement = document.createElement('div');
+      newSlideContentElement.className = 'slide-content';
+      newSlideContentElement.style.animation = 'slide-in-right 0.5s forwards';
+      this.element.querySelector('.slide').appendChild(newSlideContentElement);
+
+      // Add the new contents
+      this.addSlideContents(
+        this.data[this.currentSlide],
+        newSlideContentElement
+      );
+
+      // Remove the old slide after the animation finishes
+      setTimeout(() => {
+        oldSlideContentElement.remove();
+        resolve();
+      }, 300); // Animation time
+    });
+  };
+
+  nextSlide = async () => {
+    if (this.isAnimating) return;
+
+    this.isAnimating = true;
+    // Disable the arrows to prevent fast multiple clicks
+    this.element.querySelector('.left-arrow').disabled = true;
+    this.element.querySelector('.right-arrow').disabled = true;
+
+    // Update the current slide index
+    this.currentSlide = (this.currentSlide + 1) % this.data.length;
+
+    // Animate and update the slide
+    await this.animateSlideRight();
+
+    // Enable the arrows after the animation finishes
+    this.element.querySelector('.left-arrow').disabled = false;
+    this.element.querySelector('.right-arrow').disabled = false;
+
+    this.isAnimating = false;
+  };
+
+  prevSlide = async () => {
+    if (this.isAnimating) return;
+
+    this.isAnimating = true;
+    // Disable the arrows to prevent fast multiple clicks
+    this.element.querySelector('.left-arrow').disabled = true;
+    this.element.querySelector('.right-arrow').disabled = true;
+
+    // Update the current slide index
+    this.currentSlide =
+      (this.currentSlide - 1 + this.data.length) % this.data.length;
+
+    // Animate and update the slide
+    await this.animateSlideLeft();
+
+    // Enable the arrows after the animation finishes
+    this.element.querySelector('.left-arrow').disabled = false;
+    this.element.querySelector('.right-arrow').disabled = false;
+
+    this.isAnimating = false;
+  };
+
   goToSlide = async (index) => {
-    const difference = index - this.currentSlide;
-    console.log(this.currentSlide);
-    if (difference > 0) {
-      for (let i = 0; i < difference; i++) {
-        await this.nextSlide();
+    // If the index is the same as the current slide, do nothing
+    if (index === this.currentSlide) {
+      return;
+    }
+
+    // Ensure the index is within the bounds of the slides array
+    if (index >= 0 && index < this.data.length && !this.isAnimating) {
+      // Set the isAnimating flag to true
+      this.isAnimating = true;
+
+      // Determine the direction of navigation
+      const direction = index > this.currentSlide ? 'right' : 'left';
+
+      // Update the current slide index
+      this.currentSlide = index;
+
+      // Call the appropriate animation method based on the direction
+      if (direction === 'right') {
+        await this.animateSlideRight();
+      } else {
+        await this.animateSlideLeft();
       }
-    } else if (difference < 0) {
-      for (let i = 0; i < Math.abs(difference); i++) {
-        await this.prevSlide();
-      }
+
+      // Update the slide display based on the new current slide
+      this.updateSlide();
+
+      // Set the isAnimating flag back to false
+      this.isAnimating = false;
     }
   };
 }
 
-
 // Two instances of the component with different configuration per instance
-
 new Slider('.slider1', data); // no autoplay
 new Slider('.slider2', data, true, 3000); // autoplay with custom time of 3 seconds.
-
