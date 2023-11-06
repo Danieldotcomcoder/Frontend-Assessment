@@ -51,36 +51,6 @@
     width: 50%;
 }
 
-.slider-form {
-    border: 1px solid black;
-}
-
-.popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 50px;
-    width: 50%;
-    border: 1px solid black;
-    z-index: 1000;
-    background: lightblue;
-
-}
-
-.slide-form {
-
-    display: flex;
-    flex-direction: column;
-}
-
-.autoplay-name {
-    color: black;
-}
-
-
-
 @keyframes slide-left {
     0% {
         transform: translateX(0);
@@ -235,6 +205,47 @@
     cursor: pointer;
 }
 
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    height: 300px;
+    width: 50%;
+    border: 1px solid black;
+    z-index: 1000;
+    background: rgb(202, 223, 230);
+    border-radius: 10px;
+}
+
+.exit {
+    margin-top: 1%;
+    cursor: pointer;
+}
+
+.submit-button {
+    width: 50%;
+    align-self: center;
+}
+
+.slide-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: left;
+    height: 200px;
+}
+
+.slide-form input {
+    width: 30%;
+}
+
+.autoplay-name {
+    color: black;
+}
+
 @media (max-width: 768px) {
 
     .left-arrow,
@@ -297,6 +308,27 @@
 
     }
 
+    .add-slide-button {
+        left: 80%;
+        bottom: 5%;
+        width: 5%;
+        z-index: 50px;
+    }
+
+    .popup {
+        width: 90%;
+       
+    }
+
+    .slide-form input {
+        width: 50%;
+        padding: 1px;
+    }
+
+    .exit {
+        width: 15%;
+    }
+
 }
 
 @media only screen and (min-width: 768px) and (max-width: 1200px) {
@@ -352,5 +384,10 @@
         align-items: center;
         width: 15%;
 
+    }
+
+    .popup {
+        width: 60%;
+       
     }
 }

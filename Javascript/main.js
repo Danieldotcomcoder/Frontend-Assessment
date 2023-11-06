@@ -381,7 +381,6 @@ class Slider {
     }
   };
   createPopup = () => {
-    // The code for creating the popup goes here...
     // Create popup
     this.popup = document.createElement('div');
     this.popup.className = 'popup';
@@ -427,6 +426,7 @@ class Slider {
     // Create submit button
     const submitButton = document.createElement('button');
     submitButton.type = 'submit';
+    submitButton.className = 'submit-button'
     submitButton.textContent = 'Add Slide';
     form.appendChild(submitButton);
 
@@ -436,6 +436,7 @@ class Slider {
     // Create exit button
     const exitButton = document.createElement('button');
     exitButton.textContent = 'Exit';
+    exitButton.className = 'exit'
     exitButton.addEventListener('click', () => {
       this.popup.style.display = 'none'; // Hide popup when exit button is clicked
     });
@@ -479,36 +480,6 @@ class Slider {
     this.updateDots();
     this.addEventListeners();
     this.popup.style.display = 'none';
-  };
-
-  handleFormSubmit = (event) => {
-    event.preventDefault();
-
-    // Get form data
-    const formData = new FormData(event.target);
-    const name = formData.get('name');
-    const role = formData.get('role');
-    const image = formData.get('image');
-    const message = formData.get('message');
-
-    // Create new slide
-    const newSlide = {
-      name: name,
-      role: role,
-      image: image,
-      message: message,
-    };
-
-    // Add new slide to this slider's data
-    this.data.push(newSlide);
-
-    // Re-initialize this slider with the updated data
-    this.updateSlide();
-    this.createDots();
-    this.updateDots();
-    this.addEventListeners();
-    const popup = document.querySelector('.popup');
-    popup.style.display = 'none';
   };
 }
 
